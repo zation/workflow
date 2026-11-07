@@ -1,4 +1,4 @@
-"""dev-workflow skill 的公共工具。"""
+"""workflow skill 的公共工具。"""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ TEMPLATES_DIR = SKILL_DIR / "assets" / "templates"
 AGENTS_TEMPLATE = TEMPLATES_DIR / "AGENTS.md"
 DOCS_TEMPLATE_DIR = TEMPLATES_DIR / "docs"
 
-BACKUP_DIR = Path(".dev-workflow") / "backups"
+BACKUP_DIR = Path(".workflow") / "backups"
 
 DOC_SKELETON = (
     "product-brief.md",

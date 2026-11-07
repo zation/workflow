@@ -1,5 +1,5 @@
 ---
-name: dev-workflow
+name: workflow
 description: 把《项目开发约定》作为可版本化模板落地到代码仓库，负责创建与同步仓库根目录的 AGENTS.md 及 docs/ 长期文档骨架（product-brief / technical-architecture / data-model / devops / backlog / delivery）。支持新仓库初始化、已有仓库的模板版本比对与整份同步、缺失骨架补齐，以及 CI 场景的漂移检测。当用户要求初始化项目文档结构、生成或更新 AGENTS.md、同步开发约定、统一多个仓库的研发规范时使用。
 agent_created: true
 ---
@@ -56,7 +56,7 @@ python <skill>/scripts/sync_project.py --root <项目路径> --write
 - 从 `<!-- agents-md-template: x.y.z -->` 读出双方版本；项目侧无标记时报「未标记」，按首次接入处理。
 - 比较前统一换行符、去 BOM、忽略行尾空白，避免纯格式差异产生噪音。
 - 有差异时输出统一 diff（默认截断 200 行，`--full-diff` 看全部）。
-- `--write` 时先把 `AGENTS.md` 备份到 `.dev-workflow/backups/AGENTS.md.<时间戳>.bak`，再整份写入模板，并补齐缺失骨架。
+- `--write` 时先把 `AGENTS.md` 备份到 `.workflow/backups/AGENTS.md.<时间戳>.bak`，再整份写入模板，并补齐缺失骨架。
 - `--check` 在有差异时退出码为 1，可用于 CI 或提交前钩子。
 
 同步完成后，向开发者交代三件事：版本从哪个到哪个、`AGENTS.md` 的实质变更点、备份文件位置。
