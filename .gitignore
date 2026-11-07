@@ -1,0 +1,19 @@
+# 操作系统与编辑器
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# 本地 agent 数据（记忆、会话缓存）
+.workbuddy/
+
+# 打包与临时产物
+dist/
+*.zip
+*.bak
