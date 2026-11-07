@@ -89,7 +89,9 @@ python <skill>/scripts/sync_project.py --root <项目路径> --write
 
 ## 后续能力（v1 未实现）
 
-- 交付文档脚手架：按 topic 生成 `<topic>-spec.md` / `-plan.md` / `-tasks.md` 三件套。
+交付文档（Spec / Plan / Tasks）不设生成脚本：约定已逐节定义内容，由 AI 按 `AGENTS.md` 直接撰写，比套空骨架更贴合实际需求。
+
 - 交付收尾检查：对照约定第 5 节逐项校验验收标准、Tasks 状态、文档同步、backlog 更新。
 - 提交信息校验：检查 `[type]topic` 标题与 `Tasks-Doc` / `Tasks` 字段，可作为 commit-msg 钩子。
+- 任务与提交对应校验：校验 Tasks 中回填的 hash 存在于历史，且与提交正文的 `Tasks` 字段互为对应。
 - 模板远端刷新：从 URL 拉取并更新内置副本，自动提升版本号。

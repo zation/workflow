@@ -92,9 +92,11 @@ Python 3.10+，无需第三方依赖。文件统一以 UTF-8 读写、LF 行尾�
 
 ## 后续计划
 
-目前只做创建与同步，以下能力已列入 backlog（见 [SKILL.md](SKILL.md) 末尾）：
+交付文档（Spec / Plan / Tasks）不设生成脚本——约定已逐节定义内容，由 AI 按 `AGENTS.md` 直接撰写更贴合实际。
 
-- 交付文档脚手架：按 topic 生成 `<topic>-spec.md` / `-plan.md` / `-tasks.md`
+其余能力已列入 backlog（见 [SKILL.md](SKILL.md) 末尾）：
+
 - 交付收尾检查：对照约定第 5 节逐项校验
 - 提交信息校验：检查 `[type]topic` 与 `Tasks-Doc` / `Tasks` 字段，可作为 commit-msg 钩子
+- 任务与提交对应校验：Tasks 回填的 hash 与提交正文互为对应
 - 模板远端刷新：从 URL 拉取更新并自动升版本
