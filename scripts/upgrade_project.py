@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""比对并同步目标仓库的 AGENTS.md 与 docs/ 骨架到当前模板版本。
+"""比对并升级目标仓库的 AGENTS.md 与 docs/ 骨架到当前模板版本。
 
 默认只读：打印版本、差异和缺失项，不写文件。加 --write 才落盘（覆盖前自动备份）。
 """
@@ -52,7 +52,7 @@ def build_diff(current: str, template: str, full: bool) -> tuple[str, int]:
 def main() -> int:
     force_utf8_stdout()
     parser = argparse.ArgumentParser(
-        description="比对并同步 AGENTS.md 与 docs/ 骨架到当前模板版本。默认只读，加 --write 才写入。"
+        description="比对并升级 AGENTS.md 与 docs/ 骨架到当前模板版本。默认只读，加 --write 才写入。"
     )
     parser.add_argument("--root", default=".", help="目标仓库根目录，默认当前目录")
     parser.add_argument("--write", action="store_true", help="按模板写入 AGENTS.md 并补齐缺失骨架")
@@ -119,13 +119,13 @@ def main() -> int:
     docs_drift = bool(missing_docs)
 
     if not agents_drift and not docs_drift and not missing_dirs:
-        print("\n结论：无需同步。")
+        print("\n结论：无需升级。")
         return 0
 
     if not args.write:
         if agents_drift:
             print("\n结论：AGENTS.md 与模板存在差异，未写入任何文件。")
-            print("确认按模板同步后，加 --write 重新执行。")
+            print("确认按模板升级后，加 --write 重新执行。")
         elif docs_drift:
             print(f"\n结论：AGENTS.md 一致，但缺少 {'、'.join(missing_docs)}，未写入任何文件。")
             print("补齐骨架文件时加 --write 重新执行。")
@@ -154,7 +154,7 @@ def main() -> int:
             write_text(keep, "")
         print(f"已创建：docs/{name}/")
 
-    print("\n结论：同步完成。")
+    print("\n结论：升级完成。")
     return 0
 
 

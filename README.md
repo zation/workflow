@@ -1,6 +1,6 @@
 # workflow
 
-一个 WorkBuddy skill：把《项目开发约定》分发到各个代码仓库，并保持它们与模板一致。
+一个 WorkBuddy skill：把《项目开发约定》分发到各个代码仓库，并保持它们与模板一致。提供两个命令：`init` 接入新仓库，`upgrade` 升级已有仓库。
 
 仓库根目录就是 skill 根目录，克隆下来放进 `~/.workbuddy/skills/workflow/` 即可使用。
 
@@ -8,14 +8,14 @@
 
 同一份开发约定在十几个项目里手工维护，很快就会出现各自增删的版本，谁也说不清哪个是最新的。
 
-这个 skill 把约定做成带版本号的模板：新仓库一条命令生成 `AGENTS.md` 和 `docs/` 骨架，已有仓库一条命令比对差异并同步。
+这个 skill 把约定做成带版本号的模板：新仓库用 `init` 生成 `AGENTS.md` 和 `docs/` 骨架，已有仓库用 `upgrade` 比对差异并升到最新版本。
 
 ## 它管什么
 
 - 在仓库根目录生成 `AGENTS.md`（通用约定：基本原则、注释规范、七步开发流程、提交规则、归档规则）
 - 生成 `docs/` 长期文档骨架：`product-brief.md`、`technical-architecture.md`、`data-model.md`、`devops.md`，以及 `backlog/`、`delivery/` 目录
-- 比对项目内 `AGENTS.md` 与模板的版本差，输出 diff，确认后整份同步
-- 检测漂移，可作为 CI 或提交前检查
+- 比对项目内 `AGENTS.md` 与模板的版本差，输出 diff，确认后整份升级
+- 检测漂移：`--check` 有差异时退出码 1，可用于 CI 或提交前钩子
 
 ## 它不管什么
 
@@ -46,19 +46,19 @@ git archive --format=zip --prefix=workflow/ -o workflow.zip HEAD
 ## 使用
 
 ```bash
-# 新仓库：先预演，确认后落盘
+# init：新仓库接入，先预演，确认后落盘
 python scripts/init_project.py --root <项目路径> --dry-run
 python scripts/init_project.py --root <项目路径>
 
-# 已有仓库：先看差异，确认后加 --write
-python scripts/sync_project.py --root <项目路径>
-python scripts/sync_project.py --root <项目路径> --write
+# upgrade：已有仓库，先看差异，确认后加 --write
+python scripts/upgrade_project.py --root <项目路径>
+python scripts/upgrade_project.py --root <项目路径> --write
 
-# 只判断有无漂移，有则退出码 1
-python scripts/sync_project.py --root <项目路径> --check
+# CI：只判断有无漂移，有则退出码 1
+python scripts/upgrade_project.py --root <项目路径> --check
 ```
 
-两个脚本默认都是只读的，只有显式加 `--write`（或 `init_project.py --force`）才写文件，覆盖前会备份到目标项目内的 `.workflow/backups/`。
+`upgrade` 默认只读，只有加 `--write` 才写文件，覆盖前备份到目标项目内的 `.workflow/backups/`。`init` 默认写入，习惯上先用 `--dry-run` 预演一遍。
 
 ## 模板版本
 
@@ -76,13 +76,13 @@ python scripts/sync_project.py --root <项目路径> --check
 
 ```
 workflow/
-├── SKILL.md                  # 触发条件、操作流程、常见情况处理
-├── assets/templates/         # 模板正文，同步时整份拷贝到目标仓库
+├── SKILL.md                  # 命令定义、意图路由、常见情况处理
+├── assets/templates/         # 模板正文，升级时整份拷贝到目标仓库
 │   ├── AGENTS.md
 │   └── docs/
 └── scripts/
-    ├── init_project.py       # 初始化仓库
-    ├── sync_project.py       # 比对与同步
+    ├── init_project.py       # init：初始化仓库
+    ├── upgrade_project.py    # upgrade：比对与升级
     └── _common.py            # 共用路径与文件工具
 ```
 
@@ -96,7 +96,6 @@ Python 3.10+，无需第三方依赖。文件统一以 UTF-8 读写、LF 行尾�
 
 其余能力已列入 backlog（见 [SKILL.md](SKILL.md) 末尾）：
 
-- 交付收尾检查：对照约定第 5 节逐项校验
+- 交付收尾检查：对照约定第 5 节逐项校验，落地时会新增第三个命令
 - 提交信息校验：检查 `[type]topic` 与 `Tasks-Doc` / `Tasks` 字段，可作为 commit-msg 钩子
 - 任务与提交对应校验：Tasks 回填的 hash 与提交正文互为对应
-- 模板远端刷新：从 URL 拉取更新并自动升版本

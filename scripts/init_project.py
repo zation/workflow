@@ -40,7 +40,7 @@ def collect(root: Path, force: bool) -> list[Action]:
     elif force:
         actions.append(Action("overwrite", agents, AGENTS_TEMPLATE, "覆盖前自动备份"))
     else:
-        actions.append(Action("skip", agents, None, "已存在，改用 sync_project.py 同步"))
+        actions.append(Action("skip", agents, None, "已存在，改用 upgrade_project.py 升级"))
 
     for name in DOC_SKELETON:
         target = root / "docs" / name
@@ -122,7 +122,7 @@ def main() -> int:
         print("确认无误后去掉 --dry-run 重新执行。")
     else:
         print(f"已创建 {created} 项，跳过 {skipped} 项。")
-        print("下一步：填写 docs/ 各骨架文件的内容；已有 AGENTS.md 的项目改用 scripts/sync_project.py 同步。")
+        print("下一步：填写 docs/ 各骨架文件的内容；已有 AGENTS.md 的项目改用 scripts/upgrade_project.py 升级。")
     return 0
 
 
