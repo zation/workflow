@@ -17,6 +17,7 @@ from _common import (
     EMPTY_DOC_DIRS,
     backup_file,
     force_utf8_stdout,
+    normalize_text,
     read_text,
     write_text,
 )
@@ -60,10 +61,10 @@ def collect(root: Path, force: bool) -> list[Action]:
 
 def apply(action: Action, root: Path) -> None:
     if action.kind == "create":
-        write_text(action.path, read_text(action.source))
+        write_text(action.path, normalize_text(read_text(action.source)))
     elif action.kind == "overwrite":
         backup_file(action.path, root)
-        write_text(action.path, read_text(action.source))
+        write_text(action.path, normalize_text(read_text(action.source)))
     elif action.kind == "mkdir":
         action.path.mkdir(parents=True, exist_ok=True)
         write_text(action.path / ".gitkeep", "")

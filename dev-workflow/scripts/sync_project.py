@@ -68,8 +68,7 @@ def main() -> int:
         print(f"错误：模板缺失 {AGENTS_TEMPLATE}")
         return 2
 
-    template_raw = read_text(AGENTS_TEMPLATE)
-    template_text = normalize_text(template_raw)
+    template_text = normalize_text(read_text(AGENTS_TEMPLATE))
     template_version = detect_version(template_text)
 
     agents_path = root / "AGENTS.md"
@@ -140,11 +139,11 @@ def main() -> int:
         print(f"已备份：{backup.relative_to(root).as_posix()}")
 
     if not identical:
-        write_text(agents_path, template_raw)
+        write_text(agents_path, template_text)
         print(f"已写入：AGENTS.md（{template_version}）")
 
     for name in missing_docs:
-        write_text(docs_dir / name, read_text(DOCS_TEMPLATE_DIR / name))
+        write_text(docs_dir / name, normalize_text(read_text(DOCS_TEMPLATE_DIR / name)))
         print(f"已写入：docs/{name}")
 
     for name in missing_dirs:
