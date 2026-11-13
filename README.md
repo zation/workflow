@@ -1,49 +1,78 @@
 # workflow
 
-一个 WorkBuddy skill：把《项目开发约定》分发到各个代码仓库，并保持它们与模板一致。提供两个命令：`init` 接入新仓库，`upgrade` 升级已有仓库。
+把《项目开发约定》做成带版本号的模板，并拆成 5 个独立 skill，在 WorkBuddy、Codex 等 coding agent 里都能直接点名调用。
 
-仓库根目录就是 skill 根目录，克隆下来放进 `~/.workbuddy/skills/workflow/` 即可使用。
+约定正文只有一份（`assets/templates/AGENTS.md`），5 个技能共享同一套 `scripts/` 和 `assets/templates/`。
 
-## 它解决什么
+## 五个技能
 
-同一份开发约定在十几个项目里手工维护，很快就会出现各自增删的版本，谁也说不清哪个是最新的。
+| 技能 | 作用 | 是否写文件 |
+| --- | --- | --- |
+| `workflow-init` | 新仓库生成 `AGENTS.md` 与 `docs/` 骨架，先预演再写入 | 只创建缺失项 |
+| `workflow-upgrade` | 已有仓库升级 / 对齐 `AGENTS.md`，默认只读出差异 | 确认后才写，覆盖前备份 |
+| `workflow-review-tasks` | 按指定 Tasks 文档 review 执行结果：方案、代码、文档同步 | **只读，不修复** |
+| `workflow-review-docs` | review 指定交付的 Spec / Plan / Tasks 是否合理、同步 | **只读，不修复** |
+| `workflow-tasks` | 按指定 Tasks 文档逐任务实现、自审、验证、修复、提交，直到完成；业务问题才停下询问 | 写代码与文档、提交 |
 
-这个 skill 把约定做成带版本号的模板：新仓库用 `init` 生成 `AGENTS.md` 和 `docs/` 骨架，已有仓库用 `upgrade` 比对差异并升到最新版本。
-
-## 它管什么
-
-- 在仓库根目录生成 `AGENTS.md`（通用约定：基本原则、注释规范、七步开发流程、提交规则、归档规则）
-- 生成 `docs/` 长期文档骨架：`product-brief.md`、`technical-architecture.md`、`data-model.md`、`devops.md`，以及 `backlog/`、`delivery/` 目录
-- 比对项目内 `AGENTS.md` 与模板的版本差，输出 diff，确认后整份升级
-- 检测漂移：`--check` 有差异时退出码 1，可用于 CI 或提交前钩子
-
-## 它不管什么
-
-项目特有的约定不进 `AGENTS.md`，写进 `docs/` 下对应的长期文档。这样 `AGENTS.md` 才能在各项目间保持完全一致、整份覆盖而不产生冲突。
+两个 review 技能是硬只读：即使问题很小、即使请求里写了「review 并修一下」，也只输出分级问题清单。
 
 ## 安装
 
-skill 需要放在 `~/.workbuddy/skills/<skill-name>/`，目录名与 `SKILL.md` 的 `name` 一致，这里是 `workflow`。
-
-推荐用目录联接或软链，这样 `git pull` 之后立即生效：
+源码一份，各平台挂目录链接即可，`git pull` 后立即生效。脚本只创建链接，不覆盖、不删除任何已有内容：
 
 ```bash
-# Windows（无需管理员权限）
-cmd /c mklink /J "%USERPROFILE%\.workbuddy\skills\workflow" "E:\Project\workflow"
+# 先看计划
+python scripts/install_skills.py --dry-run --target all
 
-# macOS / Linux
-ln -s "$(pwd)" ~/.workbuddy/skills/workflow
+# 确认后执行
+python scripts/install_skills.py --target all
 ```
 
-也可以直接把整个目录复制过去，代价是每次更新都要重新复制。
+`--target` 可选 `workbuddy`（`~/.workbuddy/skills/`）、`codebuddy`（`~/.codebuddy/skills/`）、`codex`（`~/.agents/skills/`）、`all`。Windows 用目录联接（无需管理员权限），其他系统用软链。
 
-需要分发给别人时，用 `git archive` 导出干净副本，避免把 `.git`、`.workbuddy` 等本地数据打进去：
+也可以手动挂载单个技能：
+
+```bash
+# Windows
+cmd /c mklink /J "%USERPROFILE%\.workbuddy\skills\workflow-tasks" "E:\Project\workflow\skills\workflow-tasks"
+
+# macOS / Linux
+ln -s "$PWD/skills/workflow-tasks" ~/.agents/skills/workflow-tasks
+```
+
+根目录的 `SKILL.md` 仍是一个名为 `workflow` 的总入口（意图模糊时分流到子技能），安装脚本不处理它。已有 `~/.workbuddy/skills/workflow` 软链的项目保留即可；全新安装想要这个总入口，手动挂一条：
+
+```bash
+cmd /c mklink /J "%USERPROFILE%\.workbuddy\skills\workflow" "E:\Project\workflow"
+```
+
+不装它也不影响 5 个子技能。
+
+团队共享时，把 `skills/` 下的目录提交到目标仓库的 `.agents/skills/`（Codex、Cursor、Gemini CLI 等）或 `.codebuddy/skills/`（WorkBuddy / CodeBuddy），随仓库分发。
+
+导出干净副本给别人时用 `git archive`，避免带入 `.git`、`.workbuddy`：
 
 ```bash
 git archive --format=zip --prefix=workflow/ -o workflow.zip HEAD
 ```
 
-## 使用
+## 调用
+
+技能没有参数占位符，把目标路径直接写在话里，由模型从本次请求里读取：
+
+```text
+WorkBuddy   /workflow-tasks docs/delivery/user-login-tasks.md
+            @skill:workflow-review-docs docs/delivery/user-login-spec.md
+
+Codex       $workflow-tasks 执行 docs/delivery/user-login-tasks.md，剩下的任务跑完
+            $workflow-review-tasks 看一下 docs/delivery/user-login-tasks.md 的执行结果
+```
+
+两个 `init` / `upgrade` 技能通过技能目录下的 `run.py` 转调共享脚本，需要目标仓库路径；没给就用当前工作目录并先确认。
+
+## 直接跑脚本（不经技能）
+
+在源码仓库目录下执行：
 
 ```bash
 # init：新仓库接入，先预演，确认后落盘
@@ -58,13 +87,11 @@ python scripts/upgrade_project.py --root <项目路径> --write
 python scripts/upgrade_project.py --root <项目路径> --check
 ```
 
-`upgrade` 默认只读，只有加 `--write` 才写文件，覆盖前备份到目标项目内的 `.workflow/backups/`。`init` 默认写入，习惯上先用 `--dry-run` 预演一遍。
+`upgrade` 默认只读，只有 `--write` 才写文件，覆盖前备份到目标项目内的 `.workflow/backups/`。
 
 ## 模板版本
 
-`assets/templates/AGENTS.md` 顶部的 `<!-- agents-md-template: x.y.z -->` 是对外的版本标识，各项目靠它判断是否需要同步。
-
-修改模板时必须同步提升版本号，否则下游项目无从得知变更。约定如下：
+`assets/templates/AGENTS.md` 顶部的 `<!-- agents-md-template: x.y.z -->` 是对外的版本标识，各项目靠它判断是否需要同步。修改模板必须同步提升版本号：
 
 | 变更 | 版本位 |
 | --- | --- |
@@ -76,15 +103,30 @@ python scripts/upgrade_project.py --root <项目路径> --check
 
 ```
 workflow/
-├── SKILL.md                  # 命令定义、意图路由、常见情况处理
-├── assets/templates/         # 模板正文，升级时整份拷贝到目标仓库
+├── SKILL.md                      # workflow 总入口：路由索引（可选）
+├── skills/                       # 5 个独立技能，各自一个 SKILL.md
+│   ├── workflow-init/            # SKILL.md + run.py（转调 init_project.py）
+│   ├── workflow-upgrade/         # SKILL.md + run.py（转调 upgrade_project.py）
+│   ├── workflow-review-tasks/
+│   ├── workflow-review-docs/
+│   └── workflow-tasks/
+├── assets/templates/             # 约定正文与 docs 骨架，唯一事实来源
 │   ├── AGENTS.md
 │   └── docs/
 └── scripts/
-    ├── init_project.py       # init：初始化仓库
-    ├── upgrade_project.py    # upgrade：比对与升级
-    └── _common.py            # 共用路径与文件工具
+    ├── install_skills.py         # 把 5 个技能挂到各平台技能目录
+    ├── init_project.py           # 初始化仓库
+    ├── upgrade_project.py        # 比对与升级
+    └── _common.py                # 共用路径与文件工具
 ```
+
+`workflow-init` / `workflow-upgrade` 各带一个 `run.py`，用 `__file__.resolve()` 定位源码仓库再转调共享脚本。技能目录常以软链或目录联接挂载，相对路径里的 `..` 会在链接处被错误解析，直接写 `<skill>/../../scripts/` 会找不到文件。
+
+## 为什么拆成多个 skill
+
+一个 `SKILL.md` 就是一个可显式触发的名字，没有子命令，也不做 `$ARGUMENTS` 替换。要 5 个入口就只能有 5 个 `SKILL.md`。
+
+`SKILL.md` 是 Agent Skills 开放标准，各家都认；斜杠命令（`commands/`、冒号分层、参数展开）是各平台私有的。所以这里押注内容标准：规则和脚本只留一份，入口做成薄壳，跨平台只差挂载目录和提及语法。
 
 ## 环境要求
 
@@ -92,10 +134,5 @@ Python 3.10+，无需第三方依赖。文件统一以 UTF-8 读写、LF 行尾�
 
 ## 后续计划
 
-交付文档（Spec / Plan / Tasks）不设生成脚本——约定已逐节定义内容，由 AI 按 `AGENTS.md` 直接撰写更贴合实际。
-
-其余能力已列入 backlog（见 [SKILL.md](SKILL.md) 末尾）：
-
-- 交付收尾检查：对照约定第 5 节逐项校验，落地时会新增第三个命令
-- 提交信息校验：检查 `[type]topic` 与 `Tasks-Doc` / `Tasks` 字段，可作为 commit-msg 钩子
-- 任务与提交对应校验：Tasks 回填的 hash 与提交正文互为对应
+- 提交信息校验：检查 `[type]topic` 标题与 `Tasks-Doc` / `Tasks` 字段，可作为 commit-msg 钩子。
+- 任务与提交对应校验：Tasks 回填的 hash 与提交正文互为对应。
