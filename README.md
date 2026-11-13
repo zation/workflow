@@ -1,24 +1,29 @@
 # workflow
 
-把《项目开发约定》做成带版本号的模板，并拆成 5 个独立 skill，在 WorkBuddy、Codex 等 coding agent 里都能直接点名调用。
+把《项目开发约定》做成带版本号的模板，并拆成 8 个独立 skill，在 WorkBuddy、Codex 等 coding agent 里都能直接点名调用。
 
-约定正文只有一份（`assets/templates/AGENTS.md`），5 个技能共享同一套 `scripts/` 和 `assets/templates/`。
+约定正文只有一份（`assets/templates/AGENTS.md`），8 个技能共享同一套 `scripts/` 和 `assets/templates/`。
 
-## 五个技能
+## 八个技能
 
 | 技能 | 作用 | 是否写文件 |
 | --- | --- | --- |
 | `workflow-init` | 新仓库生成 `AGENTS.md` 与 `docs/` 骨架，先预演再写入 | 只创建缺失项 |
 | `workflow-upgrade` | 已有仓库升级 / 对齐 `AGENTS.md`，默认只读出差异 | 确认后才写，覆盖前备份 |
-| `workflow-review-tasks` | 按指定 Tasks 文档 review 执行结果：方案、代码、文档同步 | **只读，不修复** |
+| `workflow-spec` | 生成或订正 Spec：澄清需求、范围与验收标准 | 只写 `<topic>-spec.md` |
+| `workflow-plan` | 生成或订正 Plan：技术方案与决策依据 | 只写 `<topic>-plan.md`，可订正 Spec |
+| `workflow-tasks` | 生成或订正 Tasks 文档：把方案拆成 T001 起的任务清单 | 只写 `<topic>-tasks.md`，可订正 Spec / Plan |
+| `workflow-implement` | 按指定 Tasks 文档逐任务实现、自审、验证、修复、提交，直到完成；业务问题才停下询问 | 写代码与文档、提交 |
 | `workflow-review-docs` | review 指定交付的 Spec / Plan / Tasks 是否合理、同步 | **只读，不修复** |
-| `workflow-tasks` | 按指定 Tasks 文档逐任务实现、自审、验证、修复、提交，直到完成；业务问题才停下询问 | 写代码与文档、提交 |
+| `workflow-review-tasks` | 按指定 Tasks 文档 review 执行结果：方案、代码、文档同步 | **只读，不修复** |
+
+三个文档技能按阶段顺序各自只产出一份交付文档：可以回头订正更早阶段的文档，但不进入下一步、不执行实现、不创建 commit。方案固化的 docs 提交由开发者确认后自行完成，`workflow-implement` 与 `workflow-tasks` 开工前都会检查这个节点。
 
 两个 review 技能是硬只读：即使问题很小、即使请求里写了「review 并修一下」，也只输出分级问题清单。
 
 ## 安装
 
-源码一份，各平台挂目录链接即可。**链接是实时的**：改 `SKILL.md`、`git pull` 之后内容立刻生效，不需要重装。所以重复执行安装脚本看到「已挂载」是正常的，不是没更新。
+源码一份，各平台挂目录链接即可。**对已挂载的技能，链接是实时的**：改 `SKILL.md`、`git pull` 之后内容立刻生效，不需要重装。所以重复执行安装脚本看到「已挂载」是正常的，不是没更新。
 
 ```bash
 # 先看计划
@@ -43,19 +48,21 @@ python scripts/install_skills.py --target all
 
 新挂的链接要新开会话或重启客户端才会出现在技能列表里——客户端把技能清单缓存在 `~/.workbuddy/.skill-list-cache.json`，只有新会话会重新扫描。
 
+**技能增删或改名必须重跑安装脚本。** 链接的实时性只覆盖「已挂载技能的内容变更」；新建技能目录、删除技能、给技能改名时，目标目录里的链接不会自动跟着变。改名尤其容易踩坑：源码里把 `workflow-tasks` 改成 `workflow-implement` 后又新建了同名的 `workflow-tasks` 目录，旧链接会**静默指向新语义的技能**，安装脚本判定它「已挂载，内容实时生效」，`--force` 和孤儿链接清理都不会提示。遇到改名，先跑 `--dry-run` 看清要补哪些链接，再执行安装，并确认旧名字现在对应的是不是你要的技能；改完新开会话刷新技能列表。
+
 也可以手动挂载单个技能：
 
 ```bash
 # Windows
-cmd /c mklink /J "%USERPROFILE%\.workbuddy\skills\workflow-tasks" "E:\Project\workflow\skills\workflow-tasks"
+cmd /c mklink /J "%USERPROFILE%\.workbuddy\skills\workflow-implement" "E:\Project\workflow\skills\workflow-implement"
 
 # macOS / Linux
-ln -s "$PWD/skills/workflow-tasks" ~/.agents/skills/workflow-tasks
+ln -s "$PWD/skills/workflow-implement" ~/.agents/skills/workflow-implement
 ```
 
-根目录的 `SKILL.md` 是 `workflow` 总入口（意图模糊时分流到子技能），安装脚本不处理它，也**不建议手动挂**：仓库根下面有 `skills/`，客户端扫描会递归进去，同一批 `SKILL.md` 被登记两次，技能列表里 5 个子技能各出现两份；带 `skills/` 子目录的目录还会被当成「技能集合」，根 `workflow` 自己反倒不出现在列表里。它留在原地只作为路由索引的参考文本——真要一个 `/workflow` 式的总入口，把 `SKILL.md` 单独放进一个只装它的目录再挂。
+根目录的 `SKILL.md` 是 `workflow` 总入口（意图模糊时分流到子技能），安装脚本不处理它，也**不建议手动挂**：仓库根下面有 `skills/`，客户端扫描会递归进去，同一批 `SKILL.md` 被登记两次，技能列表里 8 个子技能各出现两份；带 `skills/` 子目录的目录还会被当成「技能集合」，根 `workflow` 自己反倒不出现在列表里。它留在原地只作为路由索引的参考文本——真要一个 `/workflow` 式的总入口，把 `SKILL.md` 单独放进一个只装它的目录再挂。
 
-不挂它不影响 5 个子技能，直接点名 `workflow-tasks` 之类的调用照常。
+不挂它不影响 8 个子技能，直接点名 `workflow-implement` 之类的调用照常。
 
 团队共享时，把 `skills/` 下的目录提交到目标仓库的 `.agents/skills/`（Codex、Cursor、Gemini CLI 等）或 `.codebuddy/skills/`（WorkBuddy / CodeBuddy），随仓库分发。
 
@@ -67,13 +74,15 @@ git archive --format=zip --prefix=workflow/ -o workflow.zip HEAD
 
 ## 调用
 
-技能没有参数占位符，把目标路径直接写在话里，由模型从本次请求里读取：
+技能没有参数占位符，把目标路径、topic 或要点名的文件直接写在话里，由模型从本次请求里读取：
 
 ```text
-WorkBuddy   /workflow-tasks docs/delivery/user-login-tasks.md
+WorkBuddy   /workflow-spec 给 user-login 写 spec，参考 docs/product-brief.md
+            /workflow-implement docs/delivery/user-login-tasks.md
             @skill:workflow-review-docs docs/delivery/user-login-spec.md
 
-Codex       $workflow-tasks 执行 docs/delivery/user-login-tasks.md，剩下的任务跑完
+Codex       $workflow-plan 依据 docs/delivery/user-login-spec.md 出方案
+            $workflow-implement 执行 docs/delivery/user-login-tasks.md，剩下的任务跑完
             $workflow-review-tasks 看一下 docs/delivery/user-login-tasks.md 的执行结果
 ```
 
@@ -108,22 +117,27 @@ python scripts/upgrade_project.py --root <项目路径> --check
 | 新增或删除约束条款、调整流程步骤 | minor |
 | 文档结构不兼容变更（文件改名、目录调整） | major |
 
+三个文档技能的阶段纪律写在各自的 `SKILL.md` 里，不进模板：`AGENTS.md` 只承载跨项目通用条款。
+
 ## 目录结构
 
 ```
 workflow/
 ├── SKILL.md                      # workflow 总入口：路由索引，不挂进技能目录
-├── skills/                       # 5 个独立技能，各自一个 SKILL.md
+├── skills/                       # 8 个独立技能，各自一个 SKILL.md
 │   ├── workflow-init/            # SKILL.md + run.py（转调 init_project.py）
 │   ├── workflow-upgrade/         # SKILL.md + run.py（转调 upgrade_project.py）
-│   ├── workflow-review-tasks/
+│   ├── workflow-spec/            # 生成或订正 Spec
+│   ├── workflow-plan/            # 生成或订正 Plan
+│   ├── workflow-tasks/           # 生成或订正 Tasks 文档（拆分任务，不执行）
+│   ├── workflow-implement/       # 按 Tasks 文档逐任务实现、验证、提交
 │   ├── workflow-review-docs/
-│   └── workflow-tasks/
+│   └── workflow-review-tasks/
 ├── assets/templates/             # 约定正文与 docs 骨架，唯一事实来源
 │   ├── AGENTS.md
 │   └── docs/
 └── scripts/
-    ├── install_skills.py         # 把 5 个技能挂到各平台技能目录
+    ├── install_skills.py         # 把 skills/ 下的技能挂到各平台技能目录
     ├── init_project.py           # 初始化仓库
     ├── upgrade_project.py        # 比对与升级
     └── _common.py                # 共用路径与文件工具
@@ -133,7 +147,7 @@ workflow/
 
 ## 为什么拆成多个 skill
 
-一个 `SKILL.md` 就是一个可显式触发的名字，没有子命令，也不做 `$ARGUMENTS` 替换。要 5 个入口就只能有 5 个 `SKILL.md`。
+一个 `SKILL.md` 就是一个可显式触发的名字，没有子命令，也不做 `$ARGUMENTS` 替换。要 8 个入口就只能有 8 个 `SKILL.md`。
 
 `SKILL.md` 是 Agent Skills 开放标准，各家都认；斜杠命令（`commands/`、冒号分层、参数展开）是各平台私有的。所以这里押注内容标准：规则和脚本只留一份，入口做成薄壳，跨平台只差挂载目录和提及语法。
 

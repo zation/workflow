@@ -1,6 +1,6 @@
 ---
 name: workflow-review-docs
-description: 评审指定交付的 Spec / Plan / Tasks 文档是否合理、三份之间是否同步、是否符合项目约定，只输出分级问题清单，不改文档。Use when 用户说 review 一下这份 spec/plan/tasks、检查方案文档、交付前看看文档有没有问题。产出按阻塞/重要/建议分级的发现，每条带文档名、章节、依据和具体问题或建议。不用于评审代码实现结果（用 workflow-review-tasks），不用于补写文档或执行任务。
+description: 评审指定交付的 Spec / Plan / Tasks 文档是否合理、三份之间是否同步、是否符合项目约定，只输出分级问题清单，不改文档。Use when 用户说 review 一下这份 spec/plan/tasks 文档写得对不对、检查方案文档、交付前看看三份文档有没有互相矛盾；评审的是文档本身，代码实现和提交结果请用 workflow-review-tasks。产出按阻塞/重要/建议分级的发现，每条带文档名、章节、依据和具体问题或建议。不用于评审代码实现结果（用 workflow-review-tasks），不用于生成交付文档（用 workflow-spec / workflow-plan / workflow-tasks），不用于按 Tasks 实现（用 workflow-implement），也不补写文档。
 agent_created: true
 ---
 
