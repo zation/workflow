@@ -53,13 +53,9 @@ cmd /c mklink /J "%USERPROFILE%\.workbuddy\skills\workflow-tasks" "E:\Project\wo
 ln -s "$PWD/skills/workflow-tasks" ~/.agents/skills/workflow-tasks
 ```
 
-根目录的 `SKILL.md` 仍是一个名为 `workflow` 的总入口（意图模糊时分流到子技能），安装脚本不处理它。已有 `~/.workbuddy/skills/workflow` 软链的项目保留即可；全新安装想要这个总入口，手动挂一条：
+根目录的 `SKILL.md` 是 `workflow` 总入口（意图模糊时分流到子技能），安装脚本不处理它，也**不建议手动挂**：仓库根下面有 `skills/`，客户端扫描会递归进去，同一批 `SKILL.md` 被登记两次，技能列表里 5 个子技能各出现两份；带 `skills/` 子目录的目录还会被当成「技能集合」，根 `workflow` 自己反倒不出现在列表里。它留在原地只作为路由索引的参考文本——真要一个 `/workflow` 式的总入口，把 `SKILL.md` 单独放进一个只装它的目录再挂。
 
-```bash
-cmd /c mklink /J "%USERPROFILE%\.workbuddy\skills\workflow" "E:\Project\workflow"
-```
-
-不装它也不影响 5 个子技能。
+不挂它不影响 5 个子技能，直接点名 `workflow-tasks` 之类的调用照常。
 
 团队共享时，把 `skills/` 下的目录提交到目标仓库的 `.agents/skills/`（Codex、Cursor、Gemini CLI 等）或 `.codebuddy/skills/`（WorkBuddy / CodeBuddy），随仓库分发。
 
@@ -116,7 +112,7 @@ python scripts/upgrade_project.py --root <项目路径> --check
 
 ```
 workflow/
-├── SKILL.md                      # workflow 总入口：路由索引（可选）
+├── SKILL.md                      # workflow 总入口：路由索引，不挂进技能目录
 ├── skills/                       # 5 个独立技能，各自一个 SKILL.md
 │   ├── workflow-init/            # SKILL.md + run.py（转调 init_project.py）
 │   ├── workflow-upgrade/         # SKILL.md + run.py（转调 upgrade_project.py）
