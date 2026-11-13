@@ -17,7 +17,7 @@
 | `workflow-review-docs` | review 指定交付的 Spec / Plan / Tasks 是否合理、同步 | **只读，不修复** |
 | `workflow-review-implementations` | 按指定 Tasks 文档 review 实现结果：方案、代码、提交、文档同步 | **只读，不修复** |
 
-三个文档技能按阶段顺序各自只产出一份交付文档：可以回头订正更早阶段的文档，但不进入下一步、不执行实现、不创建 commit。方案固化的 docs 提交由开发者确认后自行完成，`workflow-implement` 与 `workflow-tasks` 开工前都会检查这个节点。
+三个文档技能按阶段顺序各自只产出一份交付文档：可以回头订正更早阶段的文档，但不进入下一步、不执行实现、不创建 commit。每份交付文档经开发者确认后，各自做一次 docs 提交固化；提交由开发者自行完成，`workflow-plan`、`workflow-tasks`、`workflow-implement` 开工前都会先提示「上游文档已确认，请提交」并等这个节点。
 
 两个 review 技能是硬只读：即使问题很小、即使请求里写了「review 并修一下」，也只输出分级问题清单。
 
