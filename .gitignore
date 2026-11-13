@@ -16,4 +16,3 @@ __pycache__/
 # 打包与临时产物
 dist/
 *.zip
-*.bak

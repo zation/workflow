@@ -15,7 +15,6 @@ from _common import (
     DOC_SKELETON,
     DOCS_TEMPLATE_DIR,
     EMPTY_DOC_DIRS,
-    backup_file,
     force_utf8_stdout,
     normalize_text,
     read_text,
@@ -38,7 +37,7 @@ def collect(root: Path, force: bool) -> list[Action]:
     if not agents.exists():
         actions.append(Action("create", agents, AGENTS_TEMPLATE))
     elif force:
-        actions.append(Action("overwrite", agents, AGENTS_TEMPLATE, "覆盖前自动备份"))
+        actions.append(Action("overwrite", agents, AGENTS_TEMPLATE, "按模板覆盖，不备份"))
     else:
         actions.append(Action("skip", agents, None, "已存在，改用 upgrade_project.py 升级"))
 
@@ -63,7 +62,6 @@ def apply(action: Action, root: Path) -> None:
     if action.kind == "create":
         write_text(action.path, normalize_text(read_text(action.source)))
     elif action.kind == "overwrite":
-        backup_file(action.path, root)
         write_text(action.path, normalize_text(read_text(action.source)))
     elif action.kind == "mkdir":
         action.path.mkdir(parents=True, exist_ok=True)
@@ -77,7 +75,7 @@ def main() -> int:
     )
     parser.add_argument("--root", default=".", help="目标仓库根目录，默认当前目录")
     parser.add_argument("--dry-run", action="store_true", help="只打印计划，不写入文件")
-    parser.add_argument("--force", action="store_true", help="覆盖已存在的 AGENTS.md（先备份）")
+    parser.add_argument("--force", action="store_true", help="覆盖已存在的 AGENTS.md（不备份）")
     args = parser.parse_args()
 
     root = Path(args.root).expanduser().resolve()

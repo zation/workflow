@@ -29,7 +29,7 @@ python <SKILL_DIR>/run.py --root <目标仓库>
 
 ## 边界
 
-- 已存在的文件一律不覆盖。`AGENTS.md` 已存在时默认停止，提示改用 `workflow-upgrade`；只有开发者明确要求覆盖时才加 `--force`（脚本会先备份）。
+- 已存在的文件一律不覆盖。`AGENTS.md` 已存在时默认停止，提示改用 `workflow-upgrade`；只有开发者明确要求覆盖时才加 `--force`（整份覆盖，不做备份，回滚靠 Git）。
 - 不填写 `docs/` 骨架的正文。创建后提醒开发者按实际项目填写，空章节不等于已完成。
 - 不猜测业务规则，不替开发者决定项目特有约定。
 - 不修改 `run.py` 与共享脚本；要改行为请改源码仓库里的 `scripts/init_project.py`。

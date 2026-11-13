@@ -9,7 +9,7 @@
 | 技能 | 作用 | 是否写文件 |
 | --- | --- | --- |
 | `workflow-init` | 新仓库生成 `AGENTS.md` 与 `docs/` 骨架，先预演再写入 | 只创建缺失项 |
-| `workflow-upgrade` | 已有仓库升级 / 对齐 `AGENTS.md`，默认只读出差异 | 确认后才写，覆盖前备份 |
+| `workflow-upgrade` | 已有仓库升级 / 对齐 `AGENTS.md`，默认只读出差异 | 确认后才写，覆盖不备份 |
 | `workflow-spec` | 生成或订正 Spec：澄清需求、范围与验收标准 | 只写 `<topic>-spec.md` |
 | `workflow-plan` | 生成或订正 Plan：技术方案与决策依据 | 只写 `<topic>-plan.md`，可订正 Spec |
 | `workflow-tasks` | 生成或订正 Tasks 文档：把方案拆成 T001 起的任务清单 | 只写 `<topic>-tasks.md`，可订正 Spec / Plan |
@@ -105,7 +105,7 @@ python scripts/upgrade_project.py --root <项目路径> --write
 python scripts/upgrade_project.py --root <项目路径> --check
 ```
 
-`upgrade` 默认只读，只有 `--write` 才写文件，覆盖前备份到目标项目内的 `.workflow/backups/`。
+`upgrade` 默认只读，只有 `--write` 才写文件；`AGENTS.md` 会被整份覆盖，不做备份，回滚靠目标仓库的 Git 历史。
 
 ## 模板版本
 

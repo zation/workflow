@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """比对并升级目标仓库的 AGENTS.md 与 docs/ 骨架到当前模板版本。
 
-默认只读：打印版本、差异和缺失项，不写文件。加 --write 才落盘（覆盖前自动备份）。
+默认只读：打印版本、差异和缺失项，不写文件。加 --write 才落盘。
 """
 
 from __future__ import annotations
@@ -16,7 +16,6 @@ from _common import (
     DOC_SKELETON,
     DOCS_TEMPLATE_DIR,
     EMPTY_DOC_DIRS,
-    backup_file,
     force_utf8_stdout,
     normalize_text,
     read_text,
@@ -133,10 +132,6 @@ def main() -> int:
             print(f"\n结论：AGENTS.md 与骨架文件已一致，仅缺目录 {'、'.join(missing_dirs)}。")
             print("需要补齐目录时加 --write 重新执行。")
         return 1 if args.check and (agents_drift or docs_drift) else 0
-
-    if exists and not identical:
-        backup = backup_file(agents_path, root)
-        print(f"已备份：{backup.relative_to(root).as_posix()}")
 
     if not identical:
         write_text(agents_path, template_text)

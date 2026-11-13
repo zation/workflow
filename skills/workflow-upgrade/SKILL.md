@@ -1,6 +1,6 @@
 ---
 name: workflow-upgrade
-description: 把已有仓库的 AGENTS.md 与 docs/ 骨架对齐到当前模板版本，默认只读输出版本差和 diff，确认后才写入。Use when 用户说升级项目约定、更新 AGENTS.md、对齐模板、检查约定有没有漂移。产出版本变更说明、差异报告和备份位置。不用于首次接入（用 workflow-init），也不改写项目特有文档。
+description: 把已有仓库的 AGENTS.md 与 docs/ 骨架对齐到当前模板版本，默认只读输出版本差和 diff，确认后才写入。Use when 用户说升级项目约定、更新 AGENTS.md、对齐模板、检查约定有没有漂移。产出版本变更说明和差异报告。不用于首次接入（用 workflow-init），也不改写项目特有文档。
 agent_created: true
 ---
 
@@ -29,10 +29,10 @@ python <SKILL_DIR>/run.py --root <目标仓库> --write
 - **先报告再动手**：把版本从哪个到哪个、实质变更点讲清楚，取得明确同意后才加 `--write`。
 - **本地新增内容**：项目 `AGENTS.md` 里有大段自定义条款时不要直接覆盖。先说明这些属于项目特有约定，应迁移到 `docs/` 下对应长期文档，迁移完再升级。
 - **版本标记缺失**：按首次接入处理，正常走 diff + 确认流程，写入后会自动带上 `agents-md-template:` 标记。
-- 覆盖 `AGENTS.md` 前，`--write` 会先备份到目标仓库 `.workflow/backups/`，无需另行备份；仅补齐 docs 骨架时不会改动它。
+- 不做备份：`--write` 会整份覆盖 `AGENTS.md`，回滚依赖目标仓库的 Git 历史；写入前先只读跑一次看清 diff，项目里有未提交的本地改动时先由开发者自行提交或另存。仅补齐 docs 骨架时不会改动它。
 - 脚本只创建缺失的 `docs/` 骨架，不删除、不改名、不合并已有文档；文件名与骨架不一致时提示开发者自行决定。
 - 不修改 `run.py` 与共享脚本；要改行为请改源码仓库里的 `scripts/upgrade_project.py`。
 
 ## 完成后
 
-交代三件事：版本从哪个到哪个、`AGENTS.md` 的实质变更点、备份文件位置。
+交代两件事：版本从哪个到哪个、`AGENTS.md` 的实质变更点（不再产生备份文件）。
