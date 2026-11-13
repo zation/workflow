@@ -1,10 +1,10 @@
 ---
-name: workflow-review-tasks
-description: 按指定的 Tasks 文档 review 交付执行结果，检查方案一致性、代码实现和文档同步，只输出分级问题清单，不改任何文件。Use when 用户说 review 一下这个 tasks、检查交付完成情况、收尾前检查、对照 spec/plan 看实现有没有跑偏；看的是代码实现、提交和执行结果，文档本身写得对不对请用 workflow-review-docs。产出按阻塞/重要/建议分级的发现，每条带位置、依据和具体建议。不用于评审 Spec/Plan/Tasks 文档本身是否合理（用 workflow-review-docs），不用于生成 Tasks 文档（用 workflow-tasks），不用于执行任务（用 workflow-implement），也不要顺手修复。
+name: workflow-review-implementations
+description: 按指定的 Tasks 文档 review 交付的实现结果，检查方案一致性、代码实现、提交和文档同步，只输出分级问题清单，不改任何文件。Use when 用户说 review 一下这次交付的实现、检查交付完成情况、收尾前检查、对照 spec/plan 看实现有没有跑偏；看的是代码实现、提交和执行结果，文档本身写得对不对请用 workflow-review-docs。产出按阻塞/重要/建议分级的发现，每条带位置、依据和具体建议。不用于评审 Spec/Plan/Tasks 文档本身是否合理（用 workflow-review-docs），不用于生成 Tasks 文档（用 workflow-tasks），不用于执行任务（用 workflow-implement），也不要顺手修复。
 agent_created: true
 ---
 
-# workflow-review-tasks
+# workflow-review-implementations
 
 判断基准是目标仓库的 `AGENTS.md`，尤其是「标准开发流程」第 4、5、6 节；没有该文件时按本节要点评审，并提示可以先用 `workflow-init` 接入。
 

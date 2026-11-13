@@ -1,6 +1,6 @@
 ---
 name: workflow-implement
-description: 按指定的 Tasks 文档逐个执行任务，每个任务完成即自审、验证、修复并提交，直到全部完成；遇到不能自己决定的业务问题才停下询问。Use when 用户说执行这个 tasks、按计划把交付做完、把剩下的任务跑完、开始实现。产出逐个任务的实现、验证记录、提交和收尾检查。不用于生成 Tasks 文档（用 workflow-tasks）或出 Spec / Plan（用 workflow-spec / workflow-plan），不用于只读评审（用 workflow-review-tasks / workflow-review-docs），不用于生成或升级约定（用 workflow-init / workflow-upgrade）。
+description: 按指定的 Tasks 文档逐个执行任务，每个任务完成即自审、验证、修复并提交，直到全部完成；遇到不能自己决定的业务问题才停下询问。Use when 用户说执行这个 tasks、按计划把交付做完、把剩下的任务跑完、开始实现。产出逐个任务的实现、验证记录、提交和收尾检查。不用于生成 Tasks 文档（用 workflow-tasks）或出 Spec / Plan（用 workflow-spec / workflow-plan），不用于只读评审（用 workflow-review-implementations / workflow-review-docs），不用于生成或升级约定（用 workflow-init / workflow-upgrade）。
 agent_created: true
 ---
 

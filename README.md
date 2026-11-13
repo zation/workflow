@@ -15,7 +15,7 @@
 | `workflow-tasks` | 生成或订正 Tasks 文档：把方案拆成 T001 起的任务清单 | 只写 `<topic>-tasks.md`，可订正 Spec / Plan |
 | `workflow-implement` | 按指定 Tasks 文档逐任务实现、自审、验证、修复、提交，直到完成；业务问题才停下询问 | 写代码与文档、提交 |
 | `workflow-review-docs` | review 指定交付的 Spec / Plan / Tasks 是否合理、同步 | **只读，不修复** |
-| `workflow-review-tasks` | 按指定 Tasks 文档 review 执行结果：方案、代码、文档同步 | **只读，不修复** |
+| `workflow-review-implementations` | 按指定 Tasks 文档 review 实现结果：方案、代码、提交、文档同步 | **只读，不修复** |
 
 三个文档技能按阶段顺序各自只产出一份交付文档：可以回头订正更早阶段的文档，但不进入下一步、不执行实现、不创建 commit。方案固化的 docs 提交由开发者确认后自行完成，`workflow-implement` 与 `workflow-tasks` 开工前都会检查这个节点。
 
@@ -83,7 +83,7 @@ WorkBuddy   /workflow-spec 给 user-login 写 spec，参考 docs/product-brief.m
 
 Codex       $workflow-plan 依据 docs/delivery/user-login-spec.md 出方案
             $workflow-implement 执行 docs/delivery/user-login-tasks.md，剩下的任务跑完
-            $workflow-review-tasks 看一下 docs/delivery/user-login-tasks.md 的执行结果
+            $workflow-review-implementations 看一下 docs/delivery/user-login-tasks.md 的实现结果
 ```
 
 两个 `init` / `upgrade` 技能通过技能目录下的 `run.py` 转调共享脚本，需要目标仓库路径；没给就用当前工作目录并先确认。
@@ -132,7 +132,7 @@ workflow/
 │   ├── workflow-tasks/           # 生成或订正 Tasks 文档（拆分任务，不执行）
 │   ├── workflow-implement/       # 按 Tasks 文档逐任务实现、验证、提交
 │   ├── workflow-review-docs/
-│   └── workflow-review-tasks/
+│   └── workflow-review-implementations/
 ├── assets/templates/             # 约定正文与 docs 骨架，唯一事实来源
 │   ├── AGENTS.md
 │   └── docs/

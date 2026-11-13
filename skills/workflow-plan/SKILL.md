@@ -1,6 +1,6 @@
 ---
 name: workflow-plan
-description: 根据已确认的 Spec、本次对话的方案讨论和开发者点名的文件，生成或订正 <topic>-plan.md。Use when 用户说写一下 plan、出技术方案、把方案定下来。产出现状分析、技术方案与关键取舍、影响范围、数据与接口变化、兼容与迁移方案、测试策略、风险和回滚方式。允许回头订正 Spec，但不生成 Tasks、不改代码、不提交、不开始实现。不用于拆任务（用 workflow-tasks）、按 Tasks 实现（用 workflow-implement）；看文档本身写得对不对用 workflow-review-docs，看代码实现和提交结果用 workflow-review-tasks。
+description: 根据已确认的 Spec、本次对话的方案讨论和开发者点名的文件，生成或订正 <topic>-plan.md。Use when 用户说写一下 plan、出技术方案、把方案定下来。产出现状分析、技术方案与关键取舍、影响范围、数据与接口变化、兼容与迁移方案、测试策略、风险和回滚方式。允许回头订正 Spec，但不生成 Tasks、不改代码、不提交、不开始实现。不用于拆任务（用 workflow-tasks）、按 Tasks 实现（用 workflow-implement）；看文档本身写得对不对用 workflow-review-docs，看代码实现和提交结果用 workflow-review-implementations。
 agent_created: true
 ---
 

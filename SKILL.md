@@ -18,7 +18,7 @@ agent_created: true
 | 讨论技术方案，生成或订正 Plan | `workflow-plan` |
 | 把方案拆成任务，生成或订正 Tasks 文档 | `workflow-tasks` |
 | 按 Tasks 文档逐任务实现、验证、提交直到完成 | `workflow-implement` |
-| review 任务执行结果（方案、代码、文档同步），只看不改 | `workflow-review-tasks` |
+| review 交付的实现结果（方案、代码、提交、文档同步），只看不改 | `workflow-review-implementations` |
 | review Spec / Plan / Tasks 文档是否合理、同步，只看不改 | `workflow-review-docs` |
 
 用户已经点明动作或技能名时直接调用对应子技能；本技能只在意图模糊时分流，不重复执行它们的流程。

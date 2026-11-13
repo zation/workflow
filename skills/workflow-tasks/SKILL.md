@@ -1,6 +1,6 @@
 ---
 name: workflow-tasks
-description: 根据已确认的 Spec 与 Plan，把方案拆成可验证的任务，生成或订正 <topic>-tasks.md。Use when 用户说拆一下任务、生成 tasks 文档、把方案拆成 T001 起的任务清单。产出带三位递增编号、状态、目标与完成条件、依赖与执行顺序的任务清单。允许回头订正 Spec / Plan，但不执行任何任务、不改代码、不提交。需要按 Tasks 文档实现时改用 workflow-implement；看文档本身写得对不对用 workflow-review-docs，看代码实现和提交结果用 workflow-review-tasks。
+description: 根据已确认的 Spec 与 Plan，把方案拆成可验证的任务，生成或订正 <topic>-tasks.md。Use when 用户说拆一下任务、生成 tasks 文档、把方案拆成 T001 起的任务清单。产出带三位递增编号、状态、目标与完成条件、依赖与执行顺序的任务清单。允许回头订正 Spec / Plan，但不执行任何任务、不改代码、不提交。需要按 Tasks 文档实现时改用 workflow-implement；看文档本身写得对不对用 workflow-review-docs，看代码实现和提交结果用 workflow-review-implementations。
 agent_created: true
 ---
 
